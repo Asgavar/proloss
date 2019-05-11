@@ -5,7 +5,8 @@ process_words_file(Filename) :-
     repeat,
     read_string(Descriptor, '\n', '\r', IsItEnd, WordAsString),
     atom_chars(WordAsAtom, WordAsString),
-    assert(word(WordAsAtom)),
+    atom_chars(WordAsAtom, WordAsLetterList),
+    assert(word(WordAsLetterList)),
     IsItEnd == -1,
     close(Descriptor).
 

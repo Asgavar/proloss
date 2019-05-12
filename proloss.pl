@@ -20,13 +20,13 @@ word([]) -->
     [].
 word([■]) -->
     [■].
-word([Letter|Tail]) -->
-    letter(Letter), word(Tail).
+word(Word) -->
+    letter(Letter), word(Tail), {append(Letter, Tail, Word)}.
 
 %% ?- phrase(letter(Output), X).
 %% ?- phrase(letter(Output), [a]).
 %% ?- phrase(word(Output), [a,b,c,■,?,f,?,?]).
-%@ Output = [[a], [b], [c], [■], [_4772], [f], [_4796], [_4808]] ;
+%@ Output = [a, b, c, ■, _7258, f, _7270, _7276] ;
 
 
 %% ?- working_directory(_, '/home/asgavar/').

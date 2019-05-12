@@ -40,6 +40,18 @@ process_map_file(Filename, Map) :-
     close(Descriptor),
     !.
 
+materialize_row([], [], []).
+materialize_row([■|Tail], [], [■|RetTail]) :-
+    materialize_row(Tail, [], RetTail).
+materialize_row([], WordCollector, RealWord) :-
+    word(RealWord),
+    WordCollector = RealWord.  % TODO or not to do
+materialize_row([■|Tail], WordCollector, Ret) :-
+    word(RealWord),
+    WordCollector = RealWord,
+    materialize_row(Tail, [], PrevRet),
+    Ret = [■,RealWord|PrevRet].
+
 main(Map) :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
@@ -52,6 +64,3 @@ main(Map) :-
 %@ Output = [a, b, c, ■, _7258, f, _7270, _7276] ;
 %% ?- main(Map).
 %@ Map = [[t, o, t, _8252, l, _8264, o, _8276|...], [■, ■, _8472, _8478, _8484, _8490, _8496|...]].
-
-%% - funkcja-wrapper budująca [H|T] z kolejnych wierszy
-%% - właściwy algos na tym, co wyjdzie z powyższych

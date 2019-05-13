@@ -62,15 +62,21 @@ materialize_row([Block|Tail], WordCollector, Ret) :-
 materialize_row([Letter|Tail], WordCollector, Ret) :-
     materialize_row(Tail, [Letter|WordCollector], Ret).
 
+materialize_all_rows([], []) :- !.
+materialize_all_rows([RawRow|RawTail], [MaterializedRow|MaterializedTail]) :-
+    materialize_row(RawRow, [], MaterializedRow),
+    materialize_all_rows(RawTail, MaterializedTail).
+
 main(Map) :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
-    process_map_file('samples/input/proloss-map', Map).
+    process_map_file('samples/input/proloss-map', RawMap),
+    materialize_all_rows(RawMap, Map).
 
 %% ===TESTING AREA AHEAD===
 
 %% ?- process_words_file('samples/input/proloss-words-pl').
-%% ?- materialize_row([■,A,B,C,D,E,■,■,■], [], X).
+%% ?- materialize_row([■,A,k,C,D,E,■,■,■], [], X).
 
 %% ?- phrase(letter(Output), X).
 %% ?- phrase(letter(Output), [a]).

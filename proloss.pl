@@ -40,27 +40,39 @@ process_map_file(Filename, Map) :-
     close(Descriptor),
     !.
 
-materialize_row([], [], []).
-materialize_row([■|Tail], [], [■|RetTail]) :-
-    materialize_row(Tail, [], RetTail).
+materialize_row([], [], []) :- !.
 materialize_row([], WordCollector, RealWord) :-
+    reverse(WordCollector, NotReversedWordCollector),
+    NotReversedWordCollector = RealWord,
     word(RealWord),
-    WordCollector = RealWord.  % TODO or not to do
-materialize_row([■|Tail], WordCollector, Ret) :-
+    !.
+materialize_row([Block|Tail], [], [■|RetTail]) :-
+    \+ var(Block),
+    Block = ■,
+    materialize_row(Tail, [], RetTail).
+materialize_row([Block|Tail], WordCollector, Ret) :-
+    \+ var(Block),
+    Block = ■,
+    reverse(WordCollector, NotReversedWordCollector),
+    NotReversedWordCollector = RealWord,
     word(RealWord),
-    WordCollector = RealWord,
     materialize_row(Tail, [], PrevRet),
-    Ret = [■,RealWord|PrevRet].
+    append(RealWord, [■], Head),
+    append(Head, PrevRet, Ret).
+materialize_row([Letter|Tail], WordCollector, Ret) :-
+    materialize_row(Tail, [Letter|WordCollector], Ret).
 
 main(Map) :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
     process_map_file('samples/input/proloss-map', Map).
 
+%% ===TESTING AREA AHEAD===
+
+%% ?- process_words_file('samples/input/proloss-words-pl').
+%% ?- materialize_row([■,A,B,C,D,E,■,■,■], [], X).
+
 %% ?- phrase(letter(Output), X).
 %% ?- phrase(letter(Output), [a]).
 %% ?- phrase(word(Output), [a,b,c,■,?,f,?,?]).
-%@ Output = [a, b, c, ■, _2032, f, _2044, _2050] ;
-%@ Output = [a, b, c, ■, _7258, f, _7270, _7276] ;
 %% ?- main(Map).
-%@ Map = [[t, o, t, _8252, l, _8264, o, _8276|...], [■, ■, _8472, _8478, _8484, _8490, _8496|...]].

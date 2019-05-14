@@ -67,18 +67,43 @@ materialize_all_rows([RawRow|RawTail], [MaterializedRow|MaterializedTail]) :-
     materialize_row(RawRow, [], MaterializedRow),
     materialize_all_rows(RawTail, MaterializedTail).
 
+%% could be nicely written as:
+%%     display_one_row([]) :- nl.
+%% but then there would be a trailing space
+%% at every row's end.
+display_one_row([Head|[]]) :-
+    write(Head),
+    nl,
+    !.
+display_one_row([Head|Tail]) :-
+    write(Head),
+    write(' '),
+    display_one_row(Tail).
+
+display_all_rows([]).
+display_all_rows([Head|Tail]) :-
+    display_one_row(Head),
+    display_all_rows(Tail).
+
 main(Map) :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
     process_map_file('samples/input/proloss-map', RawMap),
-    materialize_all_rows(RawMap, Map).
+    %% TODO transpose and do the same with columns
+    materialize_all_rows(RawMap, Map),
+    display_all_rows(Map).
 
 %% ===TESTING AREA AHEAD===
 
 %% ?- process_words_file('samples/input/proloss-words-pl').
 %% ?- materialize_row([■,A,k,C,D,E,■,■,■], [], X).
+%@ A = C, C = E, E = o,
+%@ D = ł,
+%@ X = [■, o, k, o, ł, o, ■, ■, ■] ;
 
 %% ?- phrase(letter(Output), X).
 %% ?- phrase(letter(Output), [a]).
 %% ?- phrase(word(Output), [a,b,c,■,?,f,?,?]).
+%% ?- display_one_row([t,ę,g,i,e,■,k,r,ó,w,s,k,o]).
+
 %% ?- main(Map).

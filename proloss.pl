@@ -43,14 +43,13 @@ process_map_file(Filename, PartlyMaterializedMap) :-
     close(Descriptor),
     !.
 
-materialize_row([], [], []) :- !.
+materialize_row([], [], []).
 materialize_row([], WordCollector, RealWord) :-
     reverse(WordCollector, NotReversedWordCollector),
     NotReversedWordCollector = RealWord,
     word(RealWord),
     \+ already_used(RealWord),
-    assert(already_used(RealWord)),
-    !.
+    assert(already_used(RealWord)).
 materialize_row([Block|Tail], [], [■|RetTail]) :-
     \+ var(Block),
     Block = ■,

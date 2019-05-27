@@ -88,7 +88,7 @@ display_all_rows([Head|Tail]) :-
 main(Map) :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
-    process_map_file('samples/input/proloss-map', RawMap),
+    process_map_file('samples/input/proloss-map-2', RawMap),
     %% TODO transpose and do the same with columns
     materialize_all_rows(RawMap, Map),
     display_all_rows(Map).

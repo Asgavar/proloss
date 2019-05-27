@@ -1,3 +1,5 @@
+:- use_module(library(clpfd)).
+
 :- dynamic word/1.
 
 process_words_file(Filename) :-
@@ -34,9 +36,9 @@ process_map_file_row(Descriptor, Acc) :-
         Acc = [CurrWord|NextAcc]
     ).
 
-process_map_file(Filename, Map) :-
+process_map_file(Filename, PartlyMaterializedMap) :-
     open(Filename, read, Descriptor),
-    process_map_file_row(Descriptor, Map),
+    process_map_file_row(Descriptor, PartlyMaterializedMap),
     close(Descriptor),
     !.
 
@@ -88,10 +90,12 @@ display_all_rows([Head|Tail]) :-
 main(Map) :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
-    process_map_file('samples/input/proloss-map-2', RawMap),
-    %% TODO transpose and do the same with columns
-    materialize_all_rows(RawMap, Map),
-    display_all_rows(Map).
+    process_map_file('samples/input/proloss-map-3', RawMap),
+    materialize_all_rows(RawMap, PartlyMaterializedMap),
+    %% transpose(PartlyMaterializedMap, TransposedMap),
+    %% display_all_rows(TransposedMap),
+    %% materialize_all_rows(TransposedMap, Map),
+    display_all_rows(PartlyMaterializedMap).
 
 %% ===TESTING AREA AHEAD===
 
@@ -106,4 +110,10 @@ main(Map) :-
 %% ?- phrase(word(Output), [a,b,c,■,?,f,?,?]).
 %% ?- display_one_row([t,ę,g,i,e,■,k,r,ó,w,s,k,o]).
 
-%% ?- main(Map).
+%% ?- main(_).
+
+%% TODO:
+%% - deterministyczny output
+%% - losowy wynik
+%% - brak powtarzających się wyników
+%% - vertical/horizontal/both

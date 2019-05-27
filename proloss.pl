@@ -1,5 +1,6 @@
 :- use_module(library(clpfd)).
 
+:- dynamic already_used/1.
 :- dynamic word/1.
 
 process_words_file(Filename) :-
@@ -47,6 +48,8 @@ materialize_row([], WordCollector, RealWord) :-
     reverse(WordCollector, NotReversedWordCollector),
     NotReversedWordCollector = RealWord,
     word(RealWord),
+    \+ already_used(RealWord),
+    assert(already_used(RealWord)),
     !.
 materialize_row([Block|Tail], [], [■|RetTail]) :-
     \+ var(Block),
@@ -58,6 +61,8 @@ materialize_row([Block|Tail], WordCollector, Ret) :-
     reverse(WordCollector, NotReversedWordCollector),
     NotReversedWordCollector = RealWord,
     word(RealWord),
+    \+ already_used(RealWord),
+    assert(already_used(RealWord)),
     materialize_row(Tail, [], PrevRet),
     append(RealWord, [■], Head),
     append(Head, PrevRet, Ret).
@@ -115,5 +120,5 @@ main(Map) :-
 %% TODO:
 %% - deterministyczny output
 %% - losowy wynik
-%% - brak powtarzających się wyników
+%% - brak powtarzających się wyników DONE
 %% - vertical/horizontal/both

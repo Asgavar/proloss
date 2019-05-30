@@ -102,7 +102,7 @@ display_all_rows([Head|Tail]) :-
     display_one_row(Head),
     display_all_rows(Tail).
 
-main(Map) :-
+main :-
     working_directory(_, '/home/asgavar/proloss'),
     process_words_file('samples/input/proloss-words-pl'),
     process_map_file('samples/input/proloss-map-3', RawMap),
@@ -126,10 +126,4 @@ main(Map) :-
 %% ?- phrase(word(Output), [a,b,c,■,?,f,?,?]).
 %% ?- display_one_row([t,ę,g,i,e,■,k,r,ó,w,s,k,o]).
 
-%% ?- main(_).
-
-%% TODO:
-%% - deterministyczny output DONE
-%% - losowy wynik DONE
-%% - brak powtarzających się wyników DONE
-%% - vertical/horizontal/both
+%% ?- main.

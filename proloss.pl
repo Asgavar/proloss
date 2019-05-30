@@ -5,14 +5,25 @@
 
 process_words_file(Filename) :-
     open(Filename, read, Descriptor),
-    repeat,
-    read_string(Descriptor, '\n', '\r', IsItEnd, WordAsString),
-    atom_chars(WordAsAtom, WordAsString),
-    atom_chars(WordAsAtom, WordAsLetterList),
-    assert(word(WordAsLetterList)),
-    IsItEnd == -1,
+    read_file_to_line_list(Descriptor, Lines),
     close(Descriptor),
+    random_permutation(Lines, ShuffledLines),
+    process_line_list(ShuffledLines),
     !.
+
+process_line_list([]).
+process_line_list([HeadWord|Tail]) :-
+    atom_chars(HeadWordAsAtom, HeadWord),
+    atom_chars(HeadWordAsAtom, HeadWordAsLetterList),
+    assert(word(HeadWordAsLetterList)),
+    process_line_list(Tail).
+
+read_file_to_line_list(Descriptor, [Word]) :-
+    read_string(Descriptor, '\n', '\r', -1, Word),
+    !.
+read_file_to_line_list(Descriptor, [Word|PrevLines]) :-
+    read_string(Descriptor, '\n', '\r', _, Word),
+    read_file_to_line_list(Descriptor, PrevLines).
 
 letter(T) -->
     [?], {length(T, 1)}, !.
@@ -99,7 +110,8 @@ main(Map) :-
     %% transpose(PartlyMaterializedMap, TransposedMap),
     %% display_all_rows(TransposedMap),
     %% materialize_all_rows(TransposedMap, Map),
-    display_all_rows(PartlyMaterializedMap).
+    display_all_rows(PartlyMaterializedMap),
+    !.
 
 %% ===TESTING AREA AHEAD===
 
@@ -117,7 +129,7 @@ main(Map) :-
 %% ?- main(_).
 
 %% TODO:
-%% - deterministyczny output
-%% - losowy wynik
+%% - deterministyczny output DONE
+%% - losowy wynik DONE
 %% - brak powtarzających się wyników DONE
 %% - vertical/horizontal/both
